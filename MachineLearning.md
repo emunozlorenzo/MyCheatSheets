@@ -1,3 +1,8 @@
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MasterDataScience/blob/master/img/image2.png">
+</p>
+
+
 # MACHINE LEARNING CHEAT SHEET
 ___
 
