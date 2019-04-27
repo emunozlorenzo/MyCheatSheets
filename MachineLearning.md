@@ -95,11 +95,15 @@ Parameters:
 
 * C: Sum of Error Margins
 * kernel:
-        - linear: line of separation
-        - rbf: circle of separation
-            * Additional param gamma: Inverse of the radius
-        - poly: curved line of separation
-            * Additional param degree: Degree of the polynome
+	- linear: line of separation
+
+	- rbf: circle of separation
+
+		* Additional param gamma: Inverse of the radius
+
+	- poly: curved line of separation
+
+		* Additional param degree: Degree of the polynome
 
 ```python
 from sklearn.svm import SVC
