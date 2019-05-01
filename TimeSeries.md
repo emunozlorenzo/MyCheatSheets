@@ -45,10 +45,28 @@ diff(df['col'],k_diff=1) #.plot(figsize=(12,6),title='Time Series Differenced');
 ## 3. ACF PACF 
 ```python
 from statsmodels.tsa.stattools import acf, pacf, pacf_yw
-
+# ACF
 acf(df['col']) # Autocorrelation Function
-
+# PACF
+pacf(df['a'],nlags=4, method='ywunbiased') # ywmle and ols
 pacf_yw(df['col'],nlags=4,method='mle') # maximum likelihood estimation
 pacf_yw(df['col'],nlags=4,method='unbiased') # the statsmodels default
 pacf_ols(df['col'],nlags=4) # This provides partial autocorrelations with ordinary least squares (OLS) estimates for each lag instead of Yule-Walker
 ```
+### Plotting lag_plot
+```python
+# Non Stationary Data
+from pandas.plotting import lag_plot
+lag_plot(df1['Thousands of Passengers'],lag=1)
+```
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/lag_plot_NonStationary.png">
+</p>
+```python
+# Stationary Data
+from pandas.plotting import lag_plot
+lag_plot(df2['Births'],lag=1)
+```
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/lag_plot_Stationary.png">
+</p>
