@@ -73,3 +73,47 @@ lag_plot(df2['Births'],lag=1)
 <img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/lag_plot_Stationary.png">
 </p>
 
+### Plotting ACF PACF
+#### Non Stationary Data ACF
+
+```python
+from statsmodels.graphics.tsaplots import plot_acf
+# just 40 lags is enough
+plot_acf(df1['Thousands of Passengers'],lags=40,title='Autocorrelation Non Stationary Data')
+```
+___Shaded region is a 95 percent confidence interval___
+
+___Correlation values OUTSIDE of this confidence interval are VERY HIGHLY LIKELY to be a CORRELATION___
+
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/ACF_NonStationary.png">
+</p>
+
+#### Stationary Data ACF PACF
+
+```python
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+# just 40 lags is enough
+# shaded region is a 95 percent confidence interval
+# Correlation values OUTSIDE of this confidence interval are VERY HIGHLY LIKELY to be a CORRELATION
+plot_acf(df2['Births'],lags=40,title='Autocorrelation Stationary Data')
+```
+
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/ACF_Stationary.png">
+</p>
+
+```python
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+# just 40 lags is enough
+# shaded region is a 95 percent confidence interval
+# Correlation values OUTSIDE of this confidence interval are VERY HIGHLY LIKELY to be a CORRELATION
+plot_pacf(df2['Births'],lags=40,title='Autocorrelation Stationary Data PACF')
+```
+
+___PACF works better with Stationary Data___
+
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/PACF_Stationary.png">
+</p>
+
