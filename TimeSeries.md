@@ -62,11 +62,14 @@ lag_plot(df1['Thousands of Passengers'],lag=1)
 <p align="center"> 
 <img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/lag_plot_NonStationary.png">
 </p>
+
 ```python
 # Stationary Data
 from pandas.plotting import lag_plot
 lag_plot(df2['Births'],lag=1)
 ```
+
 <p align="center"> 
 <img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/lag_plot_Stationary.png">
 </p>
+
