@@ -184,9 +184,7 @@ forecasted_values.plot(legend=True);
 
 
 
-
-
-### To avoid warnings
+### To Avoid Warnings
 
 ```python
 # To avoid seeing warnings
