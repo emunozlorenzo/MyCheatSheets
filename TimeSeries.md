@@ -174,21 +174,22 @@ forecasted_values.plot(legend=True);
 ```
 
 <p align="center"> 
-<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/AR.png">
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/AR_img.png">
 </p>
 
 <p align="center"> 
-<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/AR_Forecast.png">
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/AR_Forecast_img.png">
 </p>
 
 
 
 
-### To Avoid Warnings
+
+
+### To avoid warnings
 
 ```python
 # To avoid seeing warnings
 import warnings
 warnings.filterwarnings('ignore')
 ```
-
