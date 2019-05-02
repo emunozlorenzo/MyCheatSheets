@@ -41,6 +41,47 @@ _Data don't show any trend and seasonality_
 - It shows trend
 - It shows seasonality
 
+### Augmented Dickey Fuller Test
+
+```python
+from statsmodels.tsa.stattools import adfuller
+dftest = adfuller(df['Thousand of Passengers'], autolag='AIC')
+print('Test statistic: {}'.format(dftest[0]))
+print('p-value: {}'.format(dftest[1]))
+print('Lag: {}'.format(dftest[2]))
+print('Number of observations: {}'.format(dftest[3]))
+for key, value in dftest[4].items():    
+    print('Critical Value ({}) = {}'.format(key, value))
+```
+
+```python
+from statsmodels.tsa.stattools import adfuller
+
+def adf_test(series,title=''):
+    """
+    Pass in a time series and an optional title, returns an ADF report
+    """
+    print(f'Augmented Dickey-Fuller Test: {title}')
+    result = adfuller(series.dropna(),autolag='AIC') # .dropna() handles differenced data
+    
+    labels = ['ADF test statistic','p-value','# lags used','# observations']
+    out = pd.Series(result[0:4],index=labels)
+
+    for key,val in result[4].items():
+        out[f'critical value ({key})']=val
+        
+    print(out.to_string())          # .to_string() removes the line "dtype: float64"
+    
+    if result[1] <= 0.05:
+        print("Strong evidence against the null hypothesis")
+        print("Reject the null hypothesis")
+        print("Data has no unit root and is stationary")
+    else:
+        print("Weak evidence against the null hypothesis")
+        print("Fail to reject the null hypothesis")
+        print("Data has a unit root and is non-stationary")
+```
+
 ### Differencing
 
 ```python
@@ -181,10 +222,43 @@ forecasted_values.plot(legend=True);
 <img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/AR_Forecast_img.png">
 </p>
 
+## 4. Metrics
+```python
+from statsmodels.tools.eval_measures import mse, rmse, meanabs
+# Alternative:
+# from sklearn.metrics import mean_squared_error
+MSE = mse(test_data,preds)
+RMSE = rmse(test_data,preds)
+MAE = meanabs(test_data,preds)
+from statsmodels.tools.eval_measures import aic, bic
+```
+## 5. Pyramid ARIMA
+- The most effective way to get good fitting models
+- pmdarima uses AIC as a metric to compare various ARIMA models
 
+```python
+# intallation
+pip3 install pmdarima
+```
 
+```python
+# Stationary Dataset
+from pmdarima import auto_arima
+# Models
+stepwise_fit = auto_arima(df2['Births'],start_p=0,start_q=0,max_p=6,max_q=3,seasonal=False,trace=True)
+# Best Model
+stepwise_fit.summary()
+```
 
-
+```python
+# Non Stationary Dataset
+from pmdarima import auto_arima
+# In this case the dataset has seasonality and m is monthly = 12
+stepwise_fit = auto_arima(df1['Thousands of Passengers'],start_p=0,start_q=0,max_p=6,max_q=4,seasonal=True,trace=True,,m=12)
+print(stepwise_fit)
+# Best Model
+stepwise_fit.summary()
+```
 
 ### To avoid warnings
 
@@ -193,3 +267,4 @@ forecasted_values.plot(legend=True);
 import warnings
 warnings.filterwarnings('ignore')
 ```
+
