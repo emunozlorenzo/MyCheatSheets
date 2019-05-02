@@ -123,3 +123,74 @@ ___PACF works better with Stationary Data___
 <img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/PACF_Stationary.png">
 </p>
 
+## 4. AR Model
+```python
+from statsmodels.tsa.ar_model import AR, ARResults
+model = AR(train_data['PopEst'])
+# Order 1 p=1 AR(1)
+AR1fit = model.fit(maxlag=1,method='cmle',trend='c',solver='lbfgs')
+# Order 2 p=2 AR(2)
+AR2fit = model.fit(maxlag=2,method='cmle',trend='c',solver='lbfgs')
+# To know the order and parameter
+AR2fit.k_ar # it shows '2'
+AR2fit.params # it shows parameters: yt = c + phi1 yt-1 + phi2 yt-2
+# Predict
+start = len(train_data)
+end=len(train_data) + len(test_data) - 1
+pred1 = AR1fit.predict(start=start,end=end)
+pred2 = AR2fit.predict(start=start,end=end)
+# Plot
+test_data.plot(figsize=(12,6))
+pred1.plot(legend=True)
+pred2.plot(legend=True);
+```
+### Statsmodel can choose the right order for us
+
+```python
+from statsmodels.tsa.ar_model import AR, ARResults
+# Instantiate
+model = AR(train_data['PopEst'])
+# Fit
+ARfit = model.fit(ic='t-stat')
+ARfit.k_ar # to know the right order
+ARfit.params # to know all the parameters
+# Predict
+start = len(train_data)
+end=len(train_data) + len(test_data) - 1
+pred = ARfit.predict(start=start,end=end)
+# Metrics
+from sklearn.metrics import mean_squared_error
+mean_squared_error(test_data['PopEst'),pred)
+# Plot
+test_data.plot(figsize=(12,6))
+pred.plot(legend=True)
+# Forecast for Furture Values
+model = AR(df['PopEst']) # Refit on the entire Dataset
+ARfit = model.fit() # Refit on the entire Dataset
+forecasted_values = ARfit.predict(start=len(df),end=len(df)+12) # Forecasting 1 year = 12 months
+# Plotting
+df['PopEst'].plot(figsize=(12,6))
+forecasted_values.plot(legend=True);
+```
+
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/AR.png">
+</p>
+
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/AR_Forecast.png">
+</p>
+
+
+
+
+
+
+### To avoid warnings
+
+```python
+# To avoid seeing warnings
+import warnings
+warnings.filterwarnings('ignore')
+```
+
