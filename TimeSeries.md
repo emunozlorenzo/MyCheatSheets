@@ -25,6 +25,14 @@ from pylab import rcParams
 rcParams['figure.figsize'] = 12,6
 result.plot();
 ```
+
+### Separated Columns to Datetime
+
+```python
+# We suppose that the monthly data starts at the first of the month
+df['Date'] = pd.to_datetime({'year':df['year'],'month':df['month'],'day':1})
+```
+
 ## General Forecasting Models
 ___
 1. Choose a model
@@ -39,6 +47,12 @@ ___
 ```python
 df = pd.read_csv('./airline_passengers.csv',index_col='Month',parse_dates=True)
 df.index.freq= 'MS'
+```
+```python
+# Another way
+df = pd.read_csv('./airline_passengers.csv')
+df.set_index(df['month'],inplace=True)
+df.index.freq = 'MS'
 ```
 ## 2. Stationary Data
 ### How Does a Stationary Series look like? 
@@ -270,7 +284,7 @@ stepwise_fit.summary()
 # Non Stationary Dataset
 from pmdarima import auto_arima
 # In this case the dataset has seasonality and m is monthly = 12
-stepwise_fit = auto_arima(df1['Thousands of Passengers'],start_p=0,start_q=0,max_p=6,max_q=4,seasonal=True,trace=True,,m=12)
+stepwise_fit = auto_arima(df1['Thousands of Passengers'],start_p=0,start_q=0,max_p=6,max_q=4,seasonal=True,trace=True,m=12)
 print(stepwise_fit)
 # Best Model
 stepwise_fit.summary()
@@ -291,7 +305,7 @@ train = df1.iloc[:90]
 test = df1.iloc[90:]
 # 4. ARMA Model
 from statsmodels.tsa.arima_model import ARMA, ARMAResults
-model = ARMA(train['Births'],order=(2,2)) # Instantiate
+model = ARMA(train['Births'],order=(2,2)) # Order is chosen from Pyramid ARIMA
 results = model.fit() # Fit
 results.summary()
 # 5. Predictions
@@ -319,20 +333,101 @@ result = seasonal_decompose(df1['Inventories'],model='add')
 from pylab import rcParams
 rcParams['figure.figsize'] = 12,6
 result.plot();
-# 2. Pyramid ARIMA
+# 2. Pyramid ARIMA (We can also check ACF and PACF)
 # Non Stationary Dataset
 from pmdarima import auto_arima
 stepwise_fit = auto_arima(df1['Inventories'],seasonal=False,trace=True) # Seaonal False in this case
 print(stepwise_fit)
 # Best Model
 stepwise_fit.summary()
-
-
+# 3. Train Test Split 
+# If We want to forecast one year (12 months), then our Testing Dataset has to be => 12 months
+train = df1.iloc[:252]
+test = df1.iloc[252:]
+# 4. ARIMA Model
 from statsmodels.tsa.arima_model import ARIMA, ARIMAResults
-from statsmodels.graphics.tsaplots import plot_acf,plot_pacf # Get parameters watching theses plots
-from pmdarima import auto_arima # Get parameters automatically
+model = ARIMA(train['Inventories'],order=(1,1,1)) # Order is chosen from Pyramid ARIMA
+results = model.fit()
+results.summary()
+# 5. Predictions
+start = len(train)
+end = len(train) + len(test) - 1
+# typ= 'levels' to return the differenced values to the original units
+preds = results.predict(start=start,end=end,typ='levels').rename('ARIMA (p,d,q) Predictions')
+# 6. Plotting
+test['Inventories'].plot(figsize=(12,6))
+preds.plot(legend=True);
+# 7. Evaluate the model
+from statsmodels.tools.eval_measures import rmse
+error = rmse(test['Inventories'],preds) # Compare it with test.mean()
+# 8. Forecast for Future Data
+# Refit with all the Data
+model = ARIMA(df1['Inventories'],order=(1,1,1)) # Order is chosen from Pyramid ARIMA
+results = model.fit()
+results.summary()
+# Forecasting
+start = len(df1)
+end = len(df1) + 12
+# typ= 'levels' to return the differenced values to the original units
+forecasted_values = results.predict(start=start,end=end,typ='levels').rename('ARIMA (p,d,q) Forecast')
+# Plotting
+df1['Inventories'].plot(figsize=(12,6),legend=True)
+forecasted_values.plot(legend=True);
 ```
 
+## 8. SARIMA
+
+```python
+# 1. Seasonal = True or False
+# model = 'additive' 'multiplicative'
+from statsmodels.tsa.seasonal import seasonal_decompose
+result = seasonal_decompose(df['interpolated'],model='add')
+from pylab import rcParams
+rcParams['figure.figsize'] = 12,6
+result.plot(); 
+# 2. Pyramid ARIMA (We can also check ACF and PACF)
+# Non Stationary Dataset
+from pmdarima import auto_arima
+# In this case the dataset has seasonality and m is every year = 12
+stepwise_fit = auto_arima(df['interpolated'],seasonal=True,trace=True,m=12)
+print(stepwise_fit)
+# Best Model
+stepwise_fit.summary()
+# 3. Train Test Split 
+# If We want to forecast one year (12 months), then our Testing Dataset has to be => 12 months
+len(df) # 729
+train = df.iloc[:717]
+test = df.iloc[717:]
+# 4. SARIMA Model
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+model = SARIMAX(train['interpolated'],order=(0,1,1),seasonal_order=(1, 0, 1, 12))
+results = model.fit()
+results.summary()
+# 5. Predictions
+start = len(train)
+end = len(train) + len(test) - 1
+# typ= 'levels' to return the differenced values to the original units
+preds = results.predict(start=start,end=end,typ='levels').rename('SARIMA (p,d,q)(P,D,Q,m) Predictions')
+# 6. Plotting
+test['interpolated'].plot(figsize=(12,6))
+preds.plot(legend=True);
+# 7. Evaluate the model
+from statsmodels.tools.eval_measures import rmse
+error = rmse(test['interpolated'],preds) # Compare it with test.mean()
+# 8. Forecast for Future Data
+# Refit with all the Data
+model = SARIMAX(df['interpolated'],order=(0,1,1),seasonal_order=(1, 0, 1, 12)) # Order is chosen from Pyramid ARIMA
+results = model.fit()
+results.summary()
+# Forecasting
+start = len(df)
+end = len(df) + 12
+# typ= 'levels' to return the differenced values to the original units
+forecasted_values = results.predict(start=start,end=end,typ='levels').rename('ARIMA (p,d,q) Forecast')
+# Plotting
+df['interpolated'].plot(figsize=(12,6),legend=True)
+forecasted_values.plot(legend=True);
+```
 
 
 
@@ -344,4 +439,5 @@ from pmdarima import auto_arima # Get parameters automatically
 # To avoid seeing warnings
 import warnings
 warnings.filterwarnings('ignore')
+```
 ```
