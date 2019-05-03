@@ -400,7 +400,7 @@ train = df.iloc[:717]
 test = df.iloc[717:]
 # 4. SARIMA Model
 from statsmodels.tsa.statespace.sarimax import SARIMAX
-model = SARIMAX(train['interpolated'],order=(0,1,1),seasonal_order=(1, 0, 1, 12))
+model = SARIMAX(train['interpolated'],order=(0,1,1),seasonal_order=(1, 0, 1, 12)) # enforce_invertibility=False
 results = model.fit()
 results.summary()
 # 5. Predictions
@@ -423,13 +423,63 @@ results.summary()
 start = len(df)
 end = len(df) + 12
 # typ= 'levels' to return the differenced values to the original units
-forecasted_values = results.predict(start=start,end=end,typ='levels').rename('ARIMA (p,d,q) Forecast')
+forecasted_values = results.predict(start=start,end=end,typ='levels').rename('SARIMA (p,d,q)(P,D,Q) Forecast')
 # Plotting
 df['interpolated'].plot(figsize=(12,6),legend=True)
 forecasted_values.plot(legend=True);
 ```
+## 9. SARIMAX with Exogenous Variables
 
-
+```python
+# 1. Seasonal = True or False
+# model = 'additive' 'multiplicative'
+from statsmodels.tsa.seasonal import seasonal_decompose
+result = seasonal_decompose(df['total'],model='add')
+from pylab import rcParams
+rcParams['figure.figsize'] = 12,6
+result.plot(); 
+# 2. Pyramid ARIMA (We can also check ACF and PACF)
+# Non Stationary Dataset
+from pmdarima import auto_arima
+# In this case the dataset has seasonality and m is every week = 7
+stepwise_fit = auto_arima(df1['total'],exogenous=df1[['holiday']],seasonal=True,trace=True,m=7)
+print(stepwise_fit)
+# Best Model
+stepwise_fit.summary()
+# 3. Train Test Split
+train = df1.iloc[:436] 
+test = df1.iloc[436:] 
+# 4. SARIMA Model
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+model = SARIMAX(train['total'],exog=train[['holiday']],order=(0,0,1),seasonal_order=(2, 0, 1, 7))
+results = model.fit()
+results.summary()
+# 5. Predictions
+start = len(train)
+end = len(train) + len(test) - 1
+# typ= 'levels' to return the differenced values to the original units
+preds = results.predict(start=start,end=end,exog=test[['holiday']],typ='levels').rename('SARIMAX (p,d,q)(P,D,Q,m) Predictions')
+# 6. Plotting
+test['total'].plot(figsize=(12,6))
+preds.plot(legend=True);
+# 7. Evaluate the model
+from statsmodels.tools.eval_measures import rmse
+error = rmse(test['total'],preds) # Compare it with test.mean()
+# 8. Forecast for Future Data
+# Refit with all the Data
+model = SARIMAX(df1['total'],exog=df1[['holiday']],order=(0,0,1),seasonal_order=(2, 0, 1, 7)) # Order is chosen from Pyramid ARIMA
+results = model.fit()
+results.summary()
+# Forecasting
+exog_forecast = df[478:][['holiday']]
+start = len(df1)
+end = len(df1) + 38
+# typ= 'levels' to return the differenced values to the original units
+forecasted_values = results.predict(start=start,end=end,exog=exog_forecast,typ='levels').rename('SARIMAX (p,d,q)(P,D,Q) Forecast')
+# Plotting
+df['total'].plot(figsize=(12,6),legend=True)
+forecasted_values.plot(legend=True);
+```
 
 
 
@@ -439,5 +489,4 @@ forecasted_values.plot(legend=True);
 # To avoid seeing warnings
 import warnings
 warnings.filterwarnings('ignore')
-```
 ```
