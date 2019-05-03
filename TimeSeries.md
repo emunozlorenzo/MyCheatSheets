@@ -210,6 +210,15 @@ model = AR(df['PopEst']) # Refit on the entire Dataset
 ARfit = model.fit() # Refit on the entire Dataset
 forecasted_values = ARfit.predict(start=len(df),end=len(df)+12) # Forecasting 1 year = 12 months
 # Plotting
+
+Words: 935
+
+Characters: 8724
+Markdown
+Toggle Zen Mode
+Preview
+Toggle Mode
+
 df['PopEst'].plot(figsize=(12,6))
 forecasted_values.plot(legend=True);
 ```
@@ -238,7 +247,8 @@ from statsmodels.tools.eval_measures import aic, bic
 
 ```python
 # intallation
-pip3 install pmdarima
+pip3 
+install pmdarima
 ```
 
 ```python
@@ -260,6 +270,46 @@ print(stepwise_fit)
 stepwise_fit.summary()
 ```
 
+## 6. ARMA
+
+```python
+# 1. Augmented Dickey-Fuller Test to check this Time Series is Stationary ###
+from statsmodels.tsa.stattools import adfuller # def adf_test(series,title=''): # See Dickey-Fuller Func
+adf_test(df1['Births'], 'Dickey-Fuller Test Births')
+# 2. Pyramid Arima to know the right orders p q automatically 
+from pmdarima import auto_arima
+auto_arima(df1['Births'],seasonal=False,trace=True).summary()
+# 3. Train Test Split 
+# If We want to forecast one month (30 days), then our Testing Dataset has to be => 30 days
+train = df1.iloc[:90]
+test = df1.iloc[90:]
+# 4. ARMA Model
+from statsmodels.tsa.arima_model import ARMA, ARMAResults
+model = ARMA(train['Births'],order=(2,2)) # Instantiate
+results = model.fit() # Fit
+results.summary()
+# 5. Predictions
+start = len(train)
+end = len(train) + len(test) - 1
+preds = results.predict(start=start,end=end).rename('ARMA (p,q) Predictions')
+# 6. Plotting
+test['Births'].plot(figsize=(12,6))
+preds.plot(legend=True);
+```
+
+## 7. ARIMA
+
+```python
+from statsmodels.tsa.arima_model import ARIMA, ARIMAResults
+from statsmodels.graphics.tsaplots import plot_acf,plot_pacf # Get parameters watching theses plots
+from pmdarima import auto_arima # Get parameters automatically
+```
+
+
+
+
+
+
 ### To avoid warnings
 
 ```python
@@ -267,4 +317,3 @@ stepwise_fit.summary()
 import warnings
 warnings.filterwarnings('ignore')
 ```
-
