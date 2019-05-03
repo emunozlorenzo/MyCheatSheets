@@ -133,6 +133,10 @@ lag_plot(df2['Births'],lag=1)
 </p>
 
 ### Plotting ACF PACF
+
+[How to Choose p and q for ARIMA Model](https://people.duke.edu/~rnau/411arim3.htm)
+
+
 #### Non Stationary Data ACF
 
 ```python
@@ -301,7 +305,29 @@ preds.plot(legend=True);
 
 ## 7. ARIMA
 
+[ARIMA](https://otexts.com/fpp2/arima-r.html)
+
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/arimaflowchart.png">
+</p>
+
 ```python
+# 1. Seasonal = True or False
+# model = 'additive' 'multiplicative'
+from statsmodels.tsa.seasonal import seasonal_decompose
+result = seasonal_decompose(df1['Inventories'],model='add')
+from pylab import rcParams
+rcParams['figure.figsize'] = 12,6
+result.plot();
+# 2. Pyramid ARIMA
+# Non Stationary Dataset
+from pmdarima import auto_arima
+stepwise_fit = auto_arima(df1['Inventories'],seasonal=False,trace=True) # Seaonal False in this case
+print(stepwise_fit)
+# Best Model
+stepwise_fit.summary()
+
+
 from statsmodels.tsa.arima_model import ARIMA, ARIMAResults
 from statsmodels.graphics.tsaplots import plot_acf,plot_pacf # Get parameters watching theses plots
 from pmdarima import auto_arima # Get parameters automatically
