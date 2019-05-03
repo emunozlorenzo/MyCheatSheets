@@ -12,7 +12,19 @@ ___
 train_data = df.iloc[:109] # .loc[:'1940-01-01']
 test_data = df.iloc[108:]
 ```
+## Error Trend Seasonality Decomposition
 
+- You have to watch the range of seasonal plot and check if this range affects your main data in order to know if your time series has seasonal parameters
+- For instance: if your seasonal range is between 1000 and -1000 and your main data are around 1E6, then your model don't have seasonal component (ARIMA)
+
+```python
+# model = 'additive' 'multiplicative'
+from statsmodels.tsa.seasonal import seasonal_decompose
+result = seasonal_decompose(df1['Inventories'],model='add')
+from pylab import rcParams
+rcParams['figure.figsize'] = 12,6
+result.plot();
+```
 ## General Forecasting Models
 ___
 1. Choose a model
@@ -210,15 +222,6 @@ model = AR(df['PopEst']) # Refit on the entire Dataset
 ARfit = model.fit() # Refit on the entire Dataset
 forecasted_values = ARfit.predict(start=len(df),end=len(df)+12) # Forecasting 1 year = 12 months
 # Plotting
-
-Words: 935
-
-Characters: 8724
-Markdown
-Toggle Zen Mode
-Preview
-Toggle Mode
-
 df['PopEst'].plot(figsize=(12,6))
 forecasted_values.plot(legend=True);
 ```
@@ -247,8 +250,7 @@ from statsmodels.tools.eval_measures import aic, bic
 
 ```python
 # intallation
-pip3 
-install pmdarima
+pip3 install pmdarima
 ```
 
 ```python
