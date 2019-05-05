@@ -77,11 +77,14 @@ forecast[['ds','yhat_lower','yhat_upper','yhat']].tail(24)
 ```python
 m.plot(forecast);
 ```
-
-![alt text](https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/prophet_output.png)
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/prophet_output.png">
+</p>
 
 ```python
 # Trend and Seasonality
 m.plot_components(forecast);
 ```
-![alt text](https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/prophet_output2.png)
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/prophet_output2.png">
+</p>
