@@ -65,7 +65,7 @@ test = df.iloc[576:]
 
 ```python
 from fbprophet import Prophet
-m = Prophet()
+m = Prophet(seasonality_mode='additive') # 'multiplicative' Find out what is better for your model: RMSE
 m.fit(train)
 ```
 
@@ -183,5 +183,83 @@ a = add_changepoints_to_plot(fig.gca(),m,forecast);
 
 <p align="center"> 
 <img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/prophet_output3.png">
+</p>
+
+## Changing Seasonality
+
+*What kind of model will give us better results? Add or Mult*
+
+*Split Train Test and Watch RMSE for ADD or MULT if you are not sure about your Dataset*
+
+### Additive Model
+
+```python
+# 1. Loading Libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+from fbprophet import Prophet
+# 2. Reading the Dataset
+df = pd.read_csv('../UPDATE-TSA-NOTEBOOKS/Data/airline_passengers.csv')
+df.columns = ['ds','y']
+df['ds'] = pd.to_datetime(df['ds'])
+# 3. Model
+m = Prophet(seasonality_mode='additive')
+m.fit(df)
+future = m.make_future_dataframe(periods=50,freq='MS')
+forecast = m.predict(future)
+# 4. Plot
+fig = m.plot(forecast);
+fig = m.plot_components(forecast);
+from fbprophet.plot import add_changepoints_to_plot
+fig = m.plot(forecast)
+a = add_changepoints_to_plot(fig.gca(),m,forecast);
+```
+
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/prophet_output4.png">
+</p>
+
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/prophet_output5.png">
+</p>
+
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/prophet_output6.png">
+</p>
+
+### Multiplicative Model
+
+```python
+# 1. Loading Libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+from fbprophet import Prophet
+# 2. Reading the Dataset
+df = pd.read_csv('../UPDATE-TSA-NOTEBOOKS/Data/airline_passengers.csv')
+df.columns = ['ds','y']
+df['ds'] = pd.to_datetime(df['ds'])
+# 3. Model
+m = Prophet(seasonality_mode='multiplicative')
+m.fit(df)
+future = m.make_future_dataframe(periods=50,freq='MS')
+forecast = m.predict(future)
+# 4. Plot
+fig = m.plot(forecast);
+fig = m.plot_components(forecast);
+from fbprophet.plot import add_changepoints_to_plot
+fig = m.plot(forecast)
+a = add_changepoints_to_plot(fig.gca(),m,forecast);
+```
+
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/prophet_output7.png">
+</p>
+
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/prophet_output8.png">
+</p>
+
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/prophet_output9.png">
 </p>
 
