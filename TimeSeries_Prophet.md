@@ -53,38 +53,135 @@ df['ds'] = pd.to_datetime(df['ds'])
 
 - By default Prophet is going to expect daily data
 
-## 2. Model
+## 2. Train Test Split
+
+```python
+print(len(df)) # to know how many rows we have
+train = df.iloc[:576]
+test = df.iloc[576:]
+```
+
+## 3. Model
 
 ```python
 from fbprophet import Prophet
 m = Prophet()
-m.fit(df)
+m.fit(train)
 ```
 
-## 3. Forecast
+## 4. Predictions
 
 ```python
 # In Stead of doing df.index.freq = 'MS' as we do in Statsmodel
-future = m.make_future_dataframe(periods=24,freq='MS')
-forecast = m.predict(future)
-forecast.head() # to find out more about the output
+future = m.make_future_dataframe(periods=12,freq='MS')
+preds = m.predict(future)
+preds.head() # to find out more about the output
 # yhat, yhat_lower and yhat_upper are probably the most important terms of this DF
-forecast[['ds','yhat_lower','yhat_upper','yhat']].tail(24)
+preds[['ds','yhat_lower','yhat_upper','yhat']].tail(24)
 ```
 
 ## 4. Plotting the Results
 
 ```python
-m.plot(forecast);
+ax = preds.plot(x='ds',y='yhat',label='Predictions',legend=True,figsize=(12,6))
+test.plot(x='ds',y='y',label='Test Data',legend=True,ax=ax,xlim=('2018-01-01','2019-01-01'));
 ```
+
+```python
+m.plot(preds);
+```
+
 <p align="center"> 
 <img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/prophet_output.png">
 </p>
 
 ```python
 # Trend and Seasonality
-m.plot_components(forecast);
+m.plot_components(preds);
 ```
 <p align="center"> 
 <img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/prophet_output2.png">
 </p>
+
+
+## 5. Evaluate the Model
+
+### 5.1 RMSE
+
+```python
+from statsmodels.tools.eval_measures import rmse
+# Alternative:
+# from sklearn.metrics import mean_squared_error
+RMSE = rmse(test['y'],preds['yhat'][-12:])
+RMSE # it should be interesting to compare this value with test['y'].mean()
+```
+### 5.2 Prophet's Metrics
+
+```python
+from fbprophet.diagnostics import cross_validation, performance_metrics
+from fbprophet.plot import plot_cross_validation_metric
+
+# The initial period should be long enough to capture all of the components of the model, 
+# in particular seasonalities and extra regressors: at least a year for yearly seasonality,
+# at least a week for weekly seasonality, etc.
+
+# Initial training period
+initial = 5 * 365
+initial = str(initial) + ' days'
+# Period lenght that we are going to perform the cross validation. 
+# How many times to fold?
+period = 5 * 365
+period = str(period) + ' days'
+# Horizon of prediction for essentially each fold. 
+# How far out do you want to forecast for each period?
+horizon = 365
+horizon = str(horizon) + ' days'
+
+df_cv = cross_validation(m,initial=initial,period=period,horizon=horizon)
+performance_metrics(df_cv)
+
+plot_cross_validation_metric(df_cv,metric='rmse');
+```
+
+## 6. Forecast
+
+```python
+from fbprophet import Prophet
+m = Prophet()
+m.fit(df)
+# In Stead of doing df.index.freq = 'MS' 
+future = m.make_future_dataframe(periods=12,freq='MS')
+
+forecast = m.predict(future)
+m.plot(forecast);
+m.plot_components(forecast);
+```
+
+## Trend Line
+
+```python
+# 1. Loading Libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+from fbprophet import Prophet
+# 2. Reading the Dataset
+df = pd.read_csv('../UPDATE-TSA-NOTEBOOKS/Data/HospitalityEmployees.csv')
+df.columns = ['ds','y']
+df['ds'] = pd.to_datetime(df['ds'])
+# 3. Fitting the Model
+m = Prophet()
+m.fit(df)
+future = m.make_future_dataframe(periods=12,freq='MS')
+# 4. Predcitions or Forecasting
+forecast = m.predict(future)
+# 5. Main Changes in Trend Line
+# It shows the major points where the trend line happened to change
+from fbprophet.plot import add_changepoints_to_plot
+fig = m.plot(forecast)
+a = add_changepoints_to_plot(fig.gca(),m,forecast);
+```
+
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/prophet_output3.png">
+</p>
+
