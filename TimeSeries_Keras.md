@@ -38,3 +38,43 @@ As the number of epochs increases, more number of times the weight are changed i
 We can divide the dataset of 2000 examples into batches of 500 then it will take 4 iterations to complete 1 epoch.
 ```
 To find out more visit [this article](https://towardsdatascience.com/epoch-vs-iterations-vs-batch-size-4dfb9c7ce9c9)
+
+## 1. Reading our Dataset
+
+```python
+df = pd.read_csv('../UPDATE-TSA-NOTEBOOKS/Data/Alcohol_Sales.csv', index_col='DATE',parse_dates=True)
+df.index.freq = 'MS'
+```
+## 2. Train Test Split
+
+```python
+print(len(df)) # to know how many rows we have
+train = df.iloc[:310]
+test = df.iloc[310:]
+```
+
+## 3. Scale your Data
+
+Normalization is a rescaling of the data from the original range so that all values are within the range of 0 and 1.
+
+Normalization can be useful, and even required in some machine learning algorithms when your time series data has input values with differing scales.It may be required for algorithms, like k-Nearest neighbors, which uses distance calculations and Linear Regression and **Artificial Neural Networks** that weight input values.
+
+```python
+from sklearn.preprocessing import MinMaxScaler
+
+# Instantiate
+scaler = MinMaxScaler()
+
+# Fit: Find the max value in the training dataset
+scaler.fit(train)
+print('Min: %f, Max: %f' % (scaler.data_min_, scaler.data_max_))
+
+# normalize the dataset
+scaled_train = scaler.transform(train)
+scaled_test = scaler.transform(test)
+
+# inverse transform
+inversed_scaled_train = scaler.inverse_transform(scaled_train)
+inversed_scaled_test = scaler.inverse_transform(scaled_test)
+```
+
