@@ -78,3 +78,130 @@ inversed_scaled_train = scaler.inverse_transform(scaled_train)
 inversed_scaled_test = scaler.inverse_transform(scaled_test)
 ```
 
+## 4. Preprocessing your Data to work with Keras and TimeSeries
+
+Take a sequence of data-points gathered at equal intervals  to produce batches for training/validation.
+
+```python
+from keras.preprocessing.sequence import TimeseriesGenerator
+# len(train_generator) = len(scaled_train) - n_inputs
+n_input = 12      # seasonality every 12 months
+n_features = 1    # How many columns you have...for TS it should be just one
+# TimeSeries Generator
+train_generator = TimeseriesGenerator(scaled_train,scaled_train,length=n_input,batch_size=1)
+```
+
+## 5. Model
+
+```python
+from keras.models import Sequential
+from keras.layers import Dense, LSTM
+# units = number of neurons, activation = activation function, input_shape, input_dim is the input dimesion
+model = Sequential()
+# First Layer LSTM
+model.add(LSTM(units=150,input_shape=(n_input,n_features),activation='relu'))
+# Output Layer
+model.add(Dense(units=1))
+# Compile
+model.compile(loss='mse',optimizer='adam')
+# Summary
+model.summary()
+```
+```python
+# Fitting our Neuronal Network
+# epochs really depends on how large your dataset is...and how much training data you have....
+model.fit_generator(train_generator,epochs=25)
+```
+
+## 6. Plotting Loss vs Epochs
+
+- Two ways
+
+```python
+# Plotting loss vs epochs
+loss = model.history.history['loss']
+epochs = range(len(loss))
+plt.plot(epochs,loss);
+```
+```python
+h = model.fit_generator(train_generator,epochs=25)
+
+def plot_metric(history, metric):
+    history_dict = history.history
+    values = history_dict[metric]
+    if 'val_' + metric in history_dict.keys():  
+        val_values = history_dict['val_' + metric]
+
+    epochs = range(1, len(values) + 1)
+
+    if 'val_' + metric in history_dict.keys():  
+        plt.plot(epochs, val_values, label='Validation')
+    plt.semilogy(epochs, values, label='Training')
+
+    if 'val_' + metric in history_dict.keys():  
+        plt.title('Training and validation %s' % metric)
+    else:
+        plt.title('Training %s' % metric)
+    plt.xlabel('Epochs')
+    plt.ylabel(metric.capitalize())
+    plt.legend()
+
+    plt.show()  
+
+plot_metric(h,'loss')
+```
+
+## 7. Predict
+
+```python
+# holding my predictions
+test_predictions = []
+
+# last n_input points from our training dataset
+first_eval_batch = scaled_train[-n_input:]
+# reshape this to the right format to work with RNN (same format as TTimeseriesGenerator)
+current_batch = first_eval_batch.reshape((1, n_input, n_features))
+
+for i in range(len(test)):
+    
+    # get prediction 1 time stamp ahead ([0] is for grabbing just the number instead of [array])
+    current_pred = model.predict(current_batch)[0]
+    
+    # store prediction
+    test_predictions.append(current_pred) 
+    
+    # update batch to now include prediction and drop first value
+    current_batch = np.append(current_batch[:,1:,:],[[current_pred]],axis=1)
+```
+## 8. Plotting Predictions
+```python
+# Inverse Transformation
+true_predictions = scaler.inverse_transform(test_predictions)
+test['Predictions'] = true_predictions
+test.plot(figsize=(12,6));
+```
+
+## 9. Evaluate the Model
+
+```python
+from statsmodels.tools.eval_measures import rmse
+error = rmse(test['Sales'],test['Predictions']) # Compare it with test.mean()
+error
+```
+
+## 10. Save your Model
+
+```python
+model.save('mymodel.h5')
+```
+
+## 11. Load the Model
+
+```python
+from keras.models import load_model
+new_model = load_model('mymodel.h5')
+# Summary
+new_model.summary()
+# etc..
+```
+
