@@ -11,4 +11,5 @@
 3. [Time Series Prophet](https://github.com/emunozlorenzo/MyCheatSheets/blob/master/TimeSeries_Prophet.md)
 4. [Time Series Keras](https://github.com/emunozlorenzo/MyCheatSheets/blob/master/TimeSeries_Keras.md)
 5. [PySpark SQL Basic](https://github.com/emunozlorenzo/MyCheatSheets/blob/master/PySpark.ipynb)
+6. [Unsupervised Learning](https://github.com/emunozlorenzo/MyCheatSheets/blob/master/Unsupervised_Learning.md)
 
