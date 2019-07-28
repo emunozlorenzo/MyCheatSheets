@@ -8,6 +8,8 @@
 
 ## Distance Matrix
 
+*Normalizar las variables antes de aplicar la matriz de distancias*
+
 ```python
 # Import Libraries
 from scipy.spatial import distance_matrix # To calculate the ditance_matrix
