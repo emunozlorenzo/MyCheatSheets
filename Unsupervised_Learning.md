@@ -77,3 +77,27 @@ ax.scatter(xs=data['star_wars'],ys=data['lord_of_the_rings'],zs=data['harry_pott
 </p>
 
 
+## 2. Hierarchical Clustering
+
+### 2.1 Linkage Criterions
+
+#### 2.1.1 Single (Enlace Simple)
+- Uses the __minimum__ of the distances between all observations of the two clusters
+- La distancia entre dos clusters es el __mínimo__ de las distancias entre cualquier dos puntos del cluster 1 y el cluster 2 
+
+#### 2.1.2 Complete (Enlace Completo)
+- Uses the __maximum__ of the distances between all observations of the two clusters
+- La distancia entre dos clusters es el __máximo__ de las distancias entre cualquier dos puntos del cluster 1 y el cluster 2 
+
+#### 2.1.3 Average (Enlace Promedio)
+- Uses the __average__ of the distances between all observations of the two clusters
+- La distancia entre dos clusters es el __promedio__ de las distancias entre cualquier dos puntos del cluster 1 y el cluster 2 
+
+#### 2.1.4 Centroid (Enlace del Centroide)
+- Distances between __centroids__ of two clusters
+- La distancia entre dos clusters es la distancia entre el __centroide__ (punto medio) del cluster 1 y el del cluster 2 
+
+#### 2.1.5 Ward (Enlace de Ward)
+- Minimizes the variance of the clustes bieng merged
+- Los clusters minimizan la varianza dentro de los puntos del mismo y en el dataset global 
+
