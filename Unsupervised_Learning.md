@@ -76,7 +76,6 @@ ax.scatter(xs=data['star_wars'],ys=data['lord_of_the_rings'],zs=data['harry_pott
 <img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/3dplot.png">
 </p>
 
-
 ## 2. Hierarchical Clustering
 
 ### 2.1 Linkage Criterions
@@ -101,3 +100,40 @@ ax.scatter(xs=data['star_wars'],ys=data['lord_of_the_rings'],zs=data['harry_pott
 - Minimizes the variance of the clustes bieng merged
 - Los clusters minimizan la varianza dentro de los puntos del mismo y en el dataset global 
 
+```python
+# Hierarchical Clustering
+import matplotlib.pyplot as plt
+from scipy.cluster.hierarchy import dendrogram, linkage
+
+# Linkage: WARD Distance: EUCLIDEAN 
+Z = linkage(data[movies],method='ward',metric='euclidean') # data[movies] definido arriba
+
+# Plot Dendrogram 
+plt.figure(figsize=(25,10))
+plt.title('Dendograma para el Clustering Jerarquico')
+plt.xlabel('ID usuarios Netflix')
+plt.ylabel('Distancia')
+dendrogram(Z, leaf_rotation=0, leaf_font_size=10)
+plt.show();
+```
+
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/ward.png">
+</p>
+
+```python
+# Linkage: CENTROID Distance: EUCLIDEAN 
+Z = linkage(data[movies],method='centroid',metric='euclidean') # data[movies] definido arriba
+
+# Plot Dendrogram 
+plt.figure(figsize=(25,10))
+plt.title('Dendograma para el Clustering Jerarquico')
+plt.xlabel('ID usuarios Netflix')
+plt.ylabel('Distancia')
+dendrogram(Z, leaf_rotation=0, leaf_font_size=10)
+plt.show();
+```
+
+<p align="center"> 
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/centroid.png">
+</p>
