@@ -157,7 +157,7 @@ plt.show();
 #### Pros
 - We don't need to specify number of clusters
 - It does not make any assumption in the data shape so it's suitebale for any shape
-### Cons
+#### Cons
 - We need to specify a threshold distance
 - Very sensitive to distance and linkage criterion
 
