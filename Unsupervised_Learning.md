@@ -83,7 +83,7 @@ ax.scatter(xs=data['star_wars'],ys=data['lord_of_the_rings'],zs=data['harry_pott
 ### 2.1 Linkage Criterions
 
 <p align="center"> 
-<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/linkage.png">
+<img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/linkages.png">
 </p>
 
 #### 2.1.1 Single (Enlace Simple)
