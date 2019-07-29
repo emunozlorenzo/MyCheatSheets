@@ -8,7 +8,7 @@
 
 ![Determining the number of clusters in a data set](https://en.wikipedia.org/wiki/Determining_the_number_of_clusters_in_a_data_set)
 
-## Distance Matrix
+## 1. Distance Matrix
 
 *Normalizar las variables antes de aplicar la matriz de distancias*
 
@@ -153,3 +153,4 @@ plt.show();
 
 ![**Notebook: Example Hierarchical Clustering using Python**](https://github.com/emunozlorenzo/MachineLearning/blob/master/09_Clustering/05_Clustering_Jerarquico_Completo_Perfect.ipynb)
 
+## 3. KMeans
