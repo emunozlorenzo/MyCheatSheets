@@ -153,4 +153,12 @@ plt.show();
 
 ![**Notebook: Example Hierarchical Clustering using Python**](https://github.com/emunozlorenzo/MachineLearning/blob/master/09_Clustering/05_Clustering_Jerarquico_Completo_Perfect.ipynb)
 
+### 2.2 Pros and Cons
+#### Pros
+- We don't need to specify number of clusters
+- It does not make any assumption in the data shape so it's suitebale for any shape
+### Cons
+- We need to specify a threshold distance
+- Very sensitive to distance and linkage criterion
+
 ## 3. KMeans
