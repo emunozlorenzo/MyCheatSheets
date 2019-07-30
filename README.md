@@ -12,4 +12,4 @@
 4. [Time Series Keras](https://github.com/emunozlorenzo/MyCheatSheets/blob/master/TimeSeries_Keras.md)
 5. [PySpark SQL Basic](https://github.com/emunozlorenzo/MyCheatSheets/blob/master/PySpark.ipynb)
 6. [Unsupervised Learning](https://github.com/emunozlorenzo/MyCheatSheets/blob/master/Unsupervised_Learning.md)
-
+7. [Unsupervised Learning Notebook](https://github.com/emunozlorenzo/MachineLearning/blob/master/09_Clustering/00_Clustering.ipynb)
