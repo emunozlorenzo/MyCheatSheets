@@ -39,6 +39,27 @@ df['Date'] = pd.to_datetime({'year':df['year'],'month':df['month'],'day':1})
 <img src="https://wiki.python.org/moin/TimeTransitionsImage?action=AttachFile&do=get&target=v1.png">
 </p>
 
+__Example:__
+Column with this format 11.01.2018 %d.%m.%Y to datetime64
+- First Way:
+
+```python
+df['date'] = pd.to_datetime(df['date'],format='%d.%m.%Y')
+```
+- Second Way:
+
+```python
+from datetime import datetime
+def date_format(x):
+    return datetime.strptime(x,'%d.%m.%Y')
+df['date'] = df['date'].apply(date_format)
+```
+
+```python
+from datetime import datetime
+df['date'] = df['date'].apply(lambda x: datetime.strptime(x,'%d.%m.%Y'))
+```
+
 ## General Forecasting Models
 ___
 1. Choose a model
@@ -171,6 +192,7 @@ ___Correlation values OUTSIDE of this confidence interval are VERY HIGHLY LIKELY
 <p align="center"> 
 <img src="https://github.com/emunozlorenzo/MyCheatSheets/blob/master/img/ACF_NonStationary.png">
 </p>
+
 
 #### Stationary Data ACF PACF
 
