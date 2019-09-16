@@ -33,6 +33,12 @@ result.plot();
 df['Date'] = pd.to_datetime({'year':df['year'],'month':df['month'],'day':1})
 ```
 
+### Working with Time
+
+<p align="center"> 
+<img src="https://wiki.python.org/moin/TimeTransitionsImage?action=AttachFile&do=get&target=v1.png">
+</p>
+
 ## General Forecasting Models
 ___
 1. Choose a model
